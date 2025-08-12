@@ -1,0 +1,56 @@
+{
+    "files.exclude": {
+        "**/._.DS_Store": true,
+        "**/out": true,
+        "**/bin": true,
+        "**/obj": true,
+        "**/*.xproj": true,
+        "**/*.user": true,
+        "**/.vs": true,
+        "**/.git": true,
+        "**/*.snk": true,
+        "**/[~][$]*": true,
+        "**/project.lock.json": true,
+        "**/package-lock.json": true,
+        "packages": true,
+        "**/npm-debug.log": true,
+        "**/node_modules": true,
+    },
+ 
+    // Editor preferences for typescript
+    "typescript.format.insertSpaceBeforeFunctionParenthesis": false,
+    "typescript.format.insertSpaceAfterOpeningAndBeforeClosingNonemptyParenthesis": false,
+    "typescript.format.insertSpaceAfterOpeningAndBeforeClosingNonemptyBrackets": false,
+    "typescript.format.insertSpaceAfterOpeningAndBeforeClosingTemplateStringBraces": true,
+    "typescript.format.insertSpaceAfterOpeningAndBeforeClosingJsxExpressionBraces": true,
+    "typescript.format.placeOpenBraceOnNewLineForFunctions": true,
+    "typescript.format.placeOpenBraceOnNewLineForControlBlocks": true,
+    "javascript.format.insertSpaceBeforeFunctionParenthesis": false,
+    "javascript.format.insertSpaceAfterOpeningAndBeforeClosingNonemptyParenthesis": false,
+    "javascript.format.insertSpaceAfterOpeningAndBeforeClosingNonemptyBrackets": false,
+
+    "eslint.options": {
+        "extends": "eslint:recommended",
+        "rules": {
+            "no-async-promise-executor": "off",
+            "no-misleading-character-class": "off",
+            "no-prototype-builtins": "off",
+            "no-shadow-restricted-names": "off",
+            "no-useless-catch": "off",
+            "no-with": "off",
+            "require-atomic-updates": "off",
+            "no-console": "error"
+          }
+    },
+
+    "editor.tabSize": 4,
+    "editor.insertSpaces": true,
+    "editor.detectIndentation": false,
+
+    "git.ignoreLimitWarning": true,
+    "git.autofetch": true,
+
+    "scm.defaultViewMode": "tree",
+
+    "debug.internalConsoleOptions": "neverOpen",
+}

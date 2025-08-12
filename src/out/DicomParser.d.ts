@@ -1,0 +1,207 @@
+declare module "DicomElement" {
+    export class DicomElement {
+        tag: string;
+        value: any;
+        VR: string;
+        VL: number;
+        constructor(tag: string, VR: string, value: any, VL?: number);
+        ToString(indent: number): string;
+    }
+}
+declare module "DicomTags" {
+    export const DICOM_TAG: {
+        readonly FILE_META_INFORMATION_GROUP_LENGTH: "0002_0000";
+        readonly MEDIA_STORAGE_SOP_CLASS_UID: "0002_0002";
+        readonly TRANSFER_SYNTAX_UID: "0002_0010";
+        readonly REFERENCED_FILE_ID: "0004_1500";
+        readonly DIRECTORY_RECORD_SEQUENCE: "0004_1220";
+        readonly DIRECTORY_RECORD_TYPE: "0004_1430";
+        readonly SPECIFIC_CHARACTER_SET: "0008_0005";
+        readonly IMAGE_TYPE: "0008_0008";
+        readonly SOP_CLASS_UID: "0008_0016";
+        readonly SOP_INSTANCE_UID: "0008_0018";
+        readonly STUDY_DATE: "0008_0020";
+        readonly ACQUISITION_DATE: "0008_0022";
+        readonly STUDY_TIME: "0008_0030";
+        readonly ACCESSION_NUMBER: "0008_0050";
+        readonly MODALITY: "0008_0060";
+        readonly MANUFACTURER: "0008,0070";
+        readonly INSTITUTION_NAME: "0008_0080";
+        readonly REFERRING_PHYSICIAN_NAME: "0008_0090";
+        readonly REFERENCED_IMAGE_SEQUENCE: "0008_1140";
+        readonly REFERENCED_SOP_CLASS_UID: "0008_1150";
+        readonly REFERENCED_SOP_INSTANCE_UID: "0008_1155";
+        readonly REFERENCED_FRAME_NUMBER: "0008_1160";
+        readonly STUDY_DESCRIPTION: "0008_1030";
+        readonly SERIES_DESCRIPTION: "0008_103E";
+        readonly PATIENT_NAME: "0010_0010";
+        readonly PATIENT_ID: "0010_0020";
+        readonly PATIENT_BIRTHDATE: "0010_0030";
+        readonly PATIENT_SEX: "0010_0040";
+        readonly PATIENT_AGE: "0010_1010";
+        readonly SLICE_THICKNESS: "0018_0050";
+        readonly CINE_RATE: "0018_0040";
+        readonly IMAGER_PIXEL_SPACING: "0018_1164";
+        readonly STUDY_ID: "0020_0010";
+        readonly INSTANCE_NUMBER: "0020_0013";
+        readonly STUDY_INSTANCE_UID: "0020_000D";
+        readonly SERIES_INSTANCE_UID: "0020_000E";
+        readonly SERIES_NUMBER: "0020_0011";
+        readonly IMAGE_POSITION_PATIENT: "0020_0032";
+        readonly IMAGE_ORIENTATION_PATIENT: "0020_0037";
+        readonly LATERALITY: "0020_0060";
+        readonly PLANE_POSITION_SEQUENCE: "0020_9113";
+        readonly PLANE_ORIENTATION_SEQUENCE: "0020_9116";
+        readonly REQUESTED_PROCEDURE_DESCRIPTION: "0032_1060";
+        readonly REQUEST_ATTRIBUTES_SEQUENCE: "0040_0275";
+        readonly ACQUISITION_TIME: "0008_0032";
+        readonly PHOTOMETRIC_INTERPRETATION: "0028_0004";
+        readonly SAMPLES_PER_PIXEL: "0028_0002";
+        readonly PLANAR_CONFIGURATION: "0028,0006";
+        readonly NUMBER_OF_FRAMES: "0028_0008";
+        readonly ROWS: "0028_0010";
+        readonly COLUMNS: "0028_0011";
+        readonly PIXEL_SPACING: "0028_0030";
+        readonly BITS_ALLOCATED: "0028_0100";
+        readonly BITS_STORED: "0028_0101";
+        readonly HIGH_BIT: "0028_0102";
+        readonly PIXEL_REPRESENTATION: "0028_0103";
+        readonly SMALLEST_IMAGE_PIXEL_VALUE: "0028_0106";
+        readonly LARGEST_IMAGE_PIXEL_VALUE: "0028_0107";
+        readonly WINDOW_CENTER: "0028_1050";
+        readonly WINDOW_WIDTH: "0028_1051";
+        readonly RESCALE_INTERCEPT: "0028_1052";
+        readonly RESCALE_SLOPE: "0028_1053";
+        readonly RESCALE_TYPE: "0028_1054";
+        readonly RED_PALETTE_COLOR_LOOKUP_TABLE_DESCRIPTOR: "0028_1101";
+        readonly GREEN_PALETTE_COLOR_LOOKUP_TABLE_DESCRIPTOR: "0028_1102";
+        readonly BLUE_PALETTE_COLOR_LOOKUP_TABLE_DESCRIPTOR: "0028_1103";
+        readonly RED_PALETTE_COLOR_LOOKUP_TABLE_DATA: "0028_1201";
+        readonly GREEN_PALETTE_COLOR_LOOKUP_TABLE_DATA: "0028_1202";
+        readonly BLUE_PALETTE_COLOR_LOOKUP_TABLE_DATA: "0028_1203";
+        readonly LOSSY_IMAGE_COMPRESSION: "0028_2110";
+        readonly LOSSY_IMAGE_COMPRESSION_RATIO: "0028_2112";
+        readonly LOSSY_IMAGE_COMPRESSION_METHOD: "0028_2114";
+        readonly LUT_DESCRIPTOR: "0028_3002";
+        readonly LUT_DATA: "0028_3006";
+        readonly VOI_LUT_SEQUENCE: "0028_3010";
+        readonly PIXEL_MEASURES_SEQUENCE: "0028_9110";
+        readonly FRAME_VOI_LUT_SEQUENCE: "0028_9132";
+        readonly PIXEL_VALUE_TRANSFORMATION_SEQUENCE: "0028_9145";
+        readonly ENCAPSULATED_DOCUMENT: "0042_0011";
+        readonly TRACKING_ID: "0062_0020";
+        readonly TRACKING_UID: "0062_0021";
+        readonly GRAPHIC_ANNOTATION_SEQUENCE: "0070_0001";
+        readonly GRAPHIC_LAYER: "0070_0002";
+        readonly BOUNDING_BOX_ANNOTATION_UNITS: "0070_0003";
+        readonly ANCHOR_POINT_ANNOTATION_UNITS: "0070_0004";
+        readonly GRAPHIC_ANNOTATION_UNITS: "0070_0005";
+        readonly UNFORMATTED_TEXT_VALUE: "0070_0006";
+        readonly TEXT_OBJECT_SEQUENCE: "0070_0008";
+        readonly GRAPHIC_OBJECT_SEQUENCE: "0070_0009";
+        readonly BOUNDING_BOX_TOP_LEFT_HAND_CORNER: "0070_0010";
+        readonly BOUNDING_BOX_BOTTOM_RIGHT_HAND_CORNER: "0070_0011";
+        readonly BOUNDING_BOX_TEXT_HORIZONTAL_JUSTIFICATION: "0070_0012";
+        readonly ANCHOR_POINT: "0070_0014";
+        readonly ANCHOR_POINT_VISIBILITY: "0070_0015";
+        readonly GRAPHIC_DIMENSIONS: "0070_0020";
+        readonly NUMBER_OF_GRAPHIC_POINTS: "0070_0021";
+        readonly GRAPHIC_DATA: "0070_0022";
+        readonly GRAPHIC_TYPE: "0070_0023";
+        readonly GRAPHIC_FILLED: "0070_0024";
+        readonly COMPOUND_GRAPHIC_SEQUENCE: "0070_0209";
+        readonly GRAPHIC_GROUP_ID: "0070_0295";
+        readonly PRESENTATION_LUT_SHAPE: "2050_0020";
+        readonly PER_FRAME_FUNC_GROUPS_SEQUENCE: "5200_9230";
+        readonly PIXEL_DATA: "7FE0_0010";
+        readonly DELIMITATION_SEQUENCE: "FFFE_E000";
+        readonly DELIMITATION_SEQUENCE_ITEMS_1: "FFFE_E00D";
+        readonly DELIMITATION_SEQUENCE_ITEMS_2: "FFFE_E0DD";
+    };
+}
+declare module "PixelSpacing" {
+    export class PixelSpacing {
+        PixelX: number;
+        PixelY: number;
+        Units: string;
+        CalibrationFactor: number;
+        constructor(pixelX?: number, pixelY?: number, units?: string);
+        static ParseDicomTag(tagValue: string): PixelSpacing;
+    }
+}
+declare module "DicomParser" {
+    import { PixelSpacing } from "PixelSpacing";
+    export class DicomParser {
+        private dicomBuffer;
+        private position;
+        private fileSize;
+        private pidCounter;
+        private isDebug;
+        private ismainImage;
+        private headerSize;
+        private numberFrames;
+        private textDecoder;
+        private textDecoderUTF8;
+        isUnsigned: boolean;
+        bitsAllocated: number;
+        transferSyntax: string;
+        modality: string;
+        photometric: string;
+        DicomTags: object;
+        image: Uint8Array;
+        reachedPixelData: boolean;
+        implicitVR: boolean;
+        pixelSpacing: PixelSpacing;
+        constructor(buffer: Uint8Array, debug?: boolean);
+        private getNextElement;
+        private fixVRValue;
+        private readElementValue;
+        private evaluateElementTag;
+        private fetchTag;
+        private addValueToMainDataset;
+        private processPixelDataSequence;
+        private processSequence;
+        private getBytes;
+        private bufferSlice;
+        private createDicomTextDecoder;
+    }
+}
+declare class BitReader {
+    private bitsLength;
+    private bits;
+    private buffer;
+    private limit;
+    private pos;
+    constructor(buffer: Uint8Array, start: number, length: number);
+    ReadByte(): number;
+    ReadBit(): boolean;
+    Align(): void;
+    ReadBytes(len: number): Uint8Array;
+    ReadLSB(length: number): number;
+}
+declare class Inflator {
+    private staticCodes;
+    private staticDistances;
+    private bitReader;
+    private buffer;
+    private bufferPosition;
+    private state;
+    private blockFinal;
+    private codesTree;
+    private distancesTree;
+    private readonly encodedLengthStart;
+    private readonly encodedLengthAdditionalBits;
+    private readonly encodedDistanceStart;
+    private readonly encodedDistanceAdditionalBits;
+    private readonly clenMap;
+    constructor();
+    private pushArray;
+    Inflate(inputbuffer: Uint8Array, start: number, length: number): Uint8Array;
+    private buildCodes;
+    private initializeStaticTrees;
+    private buildTree;
+    private buildTreeBranch;
+    private readDynamicTrees;
+    private readByte;
+    private decodeItem;
+}
