@@ -263,4 +263,3 @@ export class DicomWriter
         return isRoot ? this.buffer.GetBuffer() : null;
     }
 }
-

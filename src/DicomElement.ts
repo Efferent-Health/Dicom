@@ -15,7 +15,8 @@ export class DicomElement
 
     public ToString(indent: number): string
     {
-        if (Array.isArray(this.value)) {
+        if (Array.isArray(this.value))
+        {
             let response: string = "  ".repeat(indent) + this.tag + " " + (this.VR || "??") + " " + this.VL + " Array:\r\n";
 
             for (let i = 0; i < this.value.length; i++)
@@ -23,7 +24,8 @@ export class DicomElement
 
             return response;
         }
-        else {
+        else
+        {
             let valueStr: string;
 
             if (typeof this.value === "undefined")

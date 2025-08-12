@@ -700,4 +700,3 @@ export class DicomParser
         return new TextDecoder(encoding);
     }
 }
-
