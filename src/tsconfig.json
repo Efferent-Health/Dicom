@@ -1,6 +1,6 @@
 {
     "version": "1.0.0",
-    "description": "Efferent DicomParser Library",
+    "description": "Efferent Dicom Library",
     "copyright": "2025 (c) Efferent, Inc.",
     "authors": [
         "Pedro",
@@ -12,7 +12,7 @@
         "module": "amd",
         "noEmitOnError": true,
         "noImplicitAny": false,
-        "outFile": "./out/DicomParser.js",
+        "outFile": "./out/Efferent.Dicom.js",
         "removeComments": true,
         "sourceMap": true,
         "sourceRoot": "../tsMapping",
