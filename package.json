@@ -30,8 +30,9 @@
   "scripts": {
     "clean": "rimraf dist",
     "build:browser": "tsc -p tsconfig.browser.json",
+    "minify:browser": "esbuild dist/Efferent.Dicom.js --minify --sourcemap --legal-comments=none --outfile=dist/Efferent.Dicom.min.js",
     "build:node": "tsup",
-    "build": "npm run clean && npm run build:browser && npm run build:node",
+    "build": "npm run clean && npm run build:browser && npm run minify:browser && npm run build:node",
     "prepublishOnly": "npm run build"
   },
 
