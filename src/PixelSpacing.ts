@@ -1,31 +1,34 @@
-export class PixelSpacing
+namespace Efferent
 {
-    public PixelX: number;
-    public PixelY: number;
-    public Units: string;
-    public CalibrationFactor: number;
-
-    constructor(pixelX?: number, pixelY?: number, units?: string)
+    export class PixelSpacing
     {
-        this.PixelX = pixelX || 1;
-        this.PixelY = pixelY || (pixelX || 1);
-        this.Units = units || (pixelX ? "mm" : "px");
-        this.CalibrationFactor = pixelX || pixelY || 1;
-    }
+        public PixelX: number;
+        public PixelY: number;
+        public Units: string;
+        public CalibrationFactor: number;
 
-    public static ParseDicomTag(tagValue: string): PixelSpacing
-    {
-        try
+        constructor(pixelX?: number, pixelY?: number, units?: string)
         {
-            var values = tagValue.split("\\");
-
-            var c = parseFloat(values[0]);
-            var r = parseFloat(values[1]);
-            return new PixelSpacing(c, r, "mm");
+            this.PixelX = pixelX || 1;
+            this.PixelY = pixelY || (pixelX || 1);
+            this.Units = units || (pixelX ? "mm" : "px");
+            this.CalibrationFactor = pixelX || pixelY || 1;
         }
-        catch
+
+        public static ParseDicomTag(tagValue: string): PixelSpacing
         {
-            return null;
+            try
+            {
+                var values = tagValue.split("\\");
+
+                var c = parseFloat(values[0]);
+                var r = parseFloat(values[1]);
+                return new PixelSpacing(c, r, "mm");
+            }
+            catch
+            {
+                return null;
+            }
         }
     }
 }

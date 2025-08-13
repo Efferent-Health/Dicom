@@ -1,43 +1,46 @@
-export class DicomElement
+namespace Efferent
 {
-    public tag: string;
-    public value: any;
-    public VR: string;
-    public VL: number;
-
-    constructor(tag: string, VR: string, value: any, VL: number = 0)
+    export class DicomElement
     {
-        this.tag = tag;
-        this.VR = VR;
-        this.value = value;
-        this.VL = VL;
-    }
+        public tag: string;
+        public value: any;
+        public VR: string;
+        public VL: number;
 
-    public ToString(indent: number): string
-    {
-        if (Array.isArray(this.value))
+        constructor(tag: string, VR: string, value: any, VL: number = 0)
         {
-            let response: string = "  ".repeat(indent) + this.tag + " " + (this.VR || "??") + " " + this.VL + " Array:\r\n";
-
-            for (let i = 0; i < this.value.length; i++)
-                response += this.value[i].ToString(indent + 1) + "\r\n";
-
-            return response;
+            this.tag = tag;
+            this.VR = VR;
+            this.value = value;
+            this.VL = VL;
         }
-        else
+
+        public ToString(indent: number): string
         {
-            let valueStr: string;
+            if (Array.isArray(this.value))
+            {
+                let response: string = "  ".repeat(indent) + this.tag + " " + (this.VR || "??") + " " + this.VL + " Array:\r\n";
 
-            if (typeof this.value === "undefined")
-                valueStr = "[undefined]";
-            if (typeof this.value === "string")
-                valueStr = this.value.substring(0, 100);
-            else if (typeof this.value === "number")
-                valueStr = this.value.toString();
+                for (let i = 0; i < this.value.length; i++)
+                    response += this.value[i].ToString(indent + 1) + "\r\n";
+
+                return response;
+            }
             else
-                valueStr = "[binary]";
+            {
+                let valueStr: string;
 
-            return "  ".repeat(indent) + this.tag + " " + (this.VR || "??") + " " + this.VL + " " + valueStr;
+                if (typeof this.value === "undefined")
+                    valueStr = "[undefined]";
+                if (typeof this.value === "string")
+                    valueStr = this.value.substring(0, 100);
+                else if (typeof this.value === "number")
+                    valueStr = this.value.toString();
+                else
+                    valueStr = "[binary]";
+
+                return "  ".repeat(indent) + this.tag + " " + (this.VR || "??") + " " + this.VL + " " + valueStr;
+            }
         }
     }
 }

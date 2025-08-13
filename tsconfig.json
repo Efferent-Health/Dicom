@@ -1,0 +1,25 @@
+{
+    "version": "1.0.0",
+    "description": "Efferent Dicom Library",
+    "copyright": "2025 (c) Efferent, Inc.",
+    "authors": [
+        "Pedro",
+        "Jaime"
+    ],
+    "compilerOptions": {
+        "target": "ES5",
+        "module": "none",
+        "outFile": "dist/Efferent.Dicom.js", 
+        "sourceMap": false,
+        "declaration": true,
+        "removeComments": true,
+        "strict": false,
+        "lib": ["ES2020", "DOM"],
+        "skipLibCheck": true,
+        "downlevelIteration": true,
+        "noEmitOnError": false        
+    },
+    "include": [
+        "src/**/*.ts"
+    ]
+}
