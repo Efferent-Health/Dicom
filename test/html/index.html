@@ -114,10 +114,14 @@
                 const photometric = String(parser.DicomTags?.[TAG.PHOTOMETRIC_INTERPRETATION] || '').toUpperCase();
                 const bits = Number(parser.DicomTags?.[TAG.BITS_ALLOCATED] || 0);
 
-                const img = parser.image;
+                let img = parser.image;
 
-                if (transferSyntax === '1.2.840.10008.1.2.4.50' && img instanceof Uint8Array) {
-                    const blob = new Blob([img], { type: 'image/jpeg' });
+                if (Array.isArray(img) && img.length > 0)
+                    img = img[img.length - 1];
+
+                if (transferSyntax === '1.2.840.10008.1.2.4.50' && img instanceof Uint8Array)
+                {
+                    const blob = new Blob([img], { type: 'image/jpeg' }); 
                     const url = URL.createObjectURL(blob);
                     const image = new Image();
                     image.onload = () => {
