@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="en">
+
+    <head>
+        <meta charset="utf-8" />
+        <title>Efferent.Dicom test</title>
+        <style>
+            body {
+                font-family: system-ui, sans-serif;
+                margin: 2rem;
+            }
+
+            #summary {
+                white-space: pre-wrap;
+                font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+                font-size: 0.8rem;
+            }
+
+            button,
+            input[type="file"]::-webkit-file-upload-button,
+            input[type="file"]::file-selector-button {
+                background-color: #f0f0f0;
+                border: 1px solid #ccc;
+                padding: 0.2rem 0.8rem;
+                border-radius: 4px;
+                cursor: pointer;
+                font-size: 0.8rem;
+                transition: background-color 0.2s;
+            }
+
+            button:hover,
+            input[type="file"]::-webkit-file-upload-button:hover,
+            input[type="file"]::file-selector-button:hover {
+                background-color: #e0e0e0;
+            }
+
+            h2 {
+                font-size: 130%;
+            }
+        </style>
+    </head>
+
+    <body>
+        <h1><img src="efferent_logo_grey.png" /><br>Efferent.Dicom Parser test</h1>
+
+        <input id="file" type="file" accept=".dcm,application/dicom" />
+        <button id="parseBtn" disabled>Parse</button>
+
+        <h2>Tags&nbsp;&nbsp;<button id="detailsBtn">Details</button></h2>
+        <div id="summary"></div>
+
+        <h2>Preview (only JPEG)</h2>
+        <canvas id="canvas"></canvas>
+
+        <script src="../../dist/Efferent.Dicom.js"></script>
+
+        <script>
+            const fileInput = document.getElementById('file');
+            const parseBtn = document.getElementById('parseBtn');
+            const summary = document.getElementById('summary');
+            const canvas = document.getElementById('canvas');
+            let fileBuf = null;
+            let parser = null;
+
+            fileInput.addEventListener('change', async (e) => {
+                const f = e.target.files[0];
+                if (!f) return;
+                const ab = await f.arrayBuffer();
+                fileBuf = new Uint8Array(ab);
+                parseBtn.disabled = false;
+                summary.textContent = `Loaded: ${f.name} (${fileBuf.byteLength.toLocaleString()} bytes)`;
+                canvas.width = canvas.height = 0;
+            });
+
+            detailsBtn.addEventListener('click', () => {
+                if (parser && parser.transferSyntax)
+                    summary.textContent = stringify(parser, 3);
+            });
+
+            parseBtn.addEventListener('click', () => {
+                if (!fileBuf)
+                    return;
+
+                parser = new Efferent.DicomParser(fileBuf, /*debug*/ false);
+
+                const TAG = Efferent.DICOM_TAG;
+                const tags = parser.DicomTags || {};
+                const pick = (tag) => tags[tag] ?? '(missing)';
+
+                const lines = [
+                    `Study Date:           ${pick(TAG.STUDY_DATE)}`,
+                    `Modality:             ${pick(TAG.MODALITY)}`,
+                    `Transfer Syntax UID:  ${pick(TAG.TRANSFER_SYNTAX_UID)}`,
+                    `Patient ID:           ${pick(TAG.PATIENT_ID)}`,
+                    `Patient Name:         ${pick(TAG.PATIENT_NAME)}`,
+                    `Rows x Cols:          ${pick(TAG.ROWS)} x ${pick(TAG.COLUMNS)}`,
+                    `Photometric:          ${pick(TAG.PHOTOMETRIC_INTERPRETATION)}`,
+                    `Bits Allocated:       ${pick(TAG.BITS_ALLOCATED)}`,
+                    `Number of Frames:     ${pick(TAG.NUMBER_OF_FRAMES)}`
+                ];
+
+                summary.textContent = lines.join('\n');
+
+                tryRenderPreview(parser, canvas);
+            });
+
+            function tryRenderPreview(parser, canvas) {
+                const TAG = Efferent.DICOM_TAG;
+
+                const transferSyntax = String(parser.DicomTags?.[TAG.TRANSFER_SYNTAX_UID] || '');
+
+                const rows = Number(parser.DicomTags?.[TAG.ROWS] || 0);
+                const cols = Number(parser.DicomTags?.[TAG.COLUMNS] || 0);
+                const photometric = String(parser.DicomTags?.[TAG.PHOTOMETRIC_INTERPRETATION] || '').toUpperCase();
+                const bits = Number(parser.DicomTags?.[TAG.BITS_ALLOCATED] || 0);
+
+                const img = parser.image;
+
+                if (transferSyntax === '1.2.840.10008.1.2.4.50' && img instanceof Uint8Array) {
+                    const blob = new Blob([img], { type: 'image/jpeg' });
+                    const url = URL.createObjectURL(blob);
+                    const image = new Image();
+                    image.onload = () => {
+                        canvas.width = image.width;
+                        canvas.height = image.height;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(image, 0, 0);
+                        URL.revokeObjectURL(url);
+                    };
+                    image.onerror = () => {
+                        canvas.width = canvas.height = 0;
+                        URL.revokeObjectURL(url);
+                    };
+                    image.src = url;
+                    return;
+                }
+
+                if (!rows || !cols || !img) {
+                    canvas.width = canvas.height = 0;
+                    return;
+                }
+
+                canvas.width = cols;
+                canvas.height = rows;
+                const ctx = canvas.getContext('2d');
+                const imageData = ctx.createImageData(cols, rows);
+                const dst = imageData.data;
+
+                // Very basic renderer for 8-bit grayscale or RGB samples
+                if (bits === 8 && img instanceof Uint8Array) {
+                    if (photometric === 'RGB' && img.length >= rows * cols * 3) {
+                        // Interleaved RGB
+                        for (let i = 0, j = 0; i < rows * cols; i++, j += 4) {
+                            const r = img[i * 3 + 0], g = img[i * 3 + 1], b = img[i * 3 + 2];
+                            dst[j + 0] = r; dst[j + 1] = g; dst[j + 2] = b; dst[j + 3] = 255;
+                        }
+                    } else {
+                        // Grayscale
+                        for (let i = 0, j = 0; i < rows * cols; i++, j += 4) {
+                            const v = img[i];
+                            dst[j + 0] = v; dst[j + 1] = v; dst[j + 2] = v; dst[j + 3] = 255;
+                        }
+                    }
+                    ctx.putImageData(imageData, 0, 0);
+                } else {
+                    canvas.width = canvas.height = 0;
+                }
+            }
+
+            function stringify(value, indent = 2) {
+                const seen = new WeakSet();
+
+                function replacer(key, val) {
+                    if (typeof val === 'object' && val !== null) {
+                        if (seen.has(val)) return '[Circular]';
+                        seen.add(val);
+                    }
+
+                    if (val instanceof ArrayBuffer) return `ArrayBuffer(${val.byteLength})`;
+                    if (val instanceof DataView) return `DataView(${val.byteLength})`;
+                    if (ArrayBuffer.isView(val) && !(val instanceof DataView))
+                        return `${val.constructor.name}(${val.length})`;
+                    if (typeof Blob !== 'undefined' && val instanceof Blob)
+                        return `Blob(${val.size} bytes, type=${val.type || 'application/octet-stream'})`;
+                    if (typeof val === 'bigint') return `${val.toString()}n`;
+
+                    return val;
+                }
+
+                return JSON.stringify(value, replacer, indent);
+            }            
+        </script>
+    </body>
+
+</html>
