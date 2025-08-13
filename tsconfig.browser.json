@@ -1,17 +1,11 @@
 {
-    "version": "1.0.0",
-    "description": "Efferent Dicom Library",
-    "copyright": "2025 (c) Efferent, Inc.",
-    "authors": [
-        "Pedro",
-        "Jaime"
-    ],
     "compilerOptions": {
-        "target": "ES5",
+        "target": "ES2018",
         "module": "none",
         "outFile": "dist/Efferent.Dicom.js",
         "sourceMap": false,
         "declaration": true,
+        "declarationMap": false,
         "removeComments": true,
         "strict": false,
         "lib": [

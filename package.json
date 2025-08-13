@@ -1,32 +1,49 @@
 {
   "name": "efferent-dicom",
   "version": "1.0.0",
-  "description": "Dual build: browser global + Node (ESM/CJS) via bundling a tiny entry",
+  "description": "DICOM parser/writer for browser and Node.js",
   "type": "module",
   "sideEffects": false,
-  "main": "./dist/node/cjs/index.cjs",
-  "module": "./dist/node/esm/index.js",
-  "types": "./types/index.d.ts",
+
+  "main": "./dist/node/index.cjs",
+  "module": "./dist/node/index.js",
+  "types": "./dist/node/index.d.ts",
+
   "exports": {
     ".": {
-      "import": "./dist/node/esm/index.js",
-      "require": "./dist/node/cjs/index.cjs"
+      "import": "./dist/node/index.js",
+      "require": "./dist/node/index.cjs"
     },
     "./browser": "./dist/Efferent.Dicom.js"
   },
+
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Efferent-Health/Dicom.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Efferent-Health/Dicom/issues"
+  },
+  "homepage": "https://github.com/Efferent-Health/Dicom#readme",
+  "license": "MIT",
+
   "scripts": {
+    "clean": "rimraf dist",
     "build:browser": "tsc -p tsconfig.browser.json",
     "build:node": "tsup",
-    "build": "npm run build:browser && npm run build:node"
+    "build": "npm run clean && npm run build:browser && npm run build:node",
+    "prepublishOnly": "npm run build"
   },
+
   "files": [
     "dist",
-    "types",
     "README.md",
     "LICENSE"
   ],
+
   "devDependencies": {
-    "@types/node": "^24.2.1",
+    "@types/node": "^20.0.0",
+    "rimraf": "^5.0.0",
     "tsup": "^8.5.0",
     "typescript": "^5.5.0"
   }

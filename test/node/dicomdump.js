@@ -7,8 +7,9 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import { DicomParser, DICOM_TAG as TAG } from '../../dist/node/index.js';
 
+// import { DicomParser, DICOM_TAG as TAG} from 'efferent-dicom';
+
 const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
 if (process.argv.length < 3) {
     console.error('Usage: node dicomdump.js <input.dcm>');
@@ -29,6 +30,30 @@ const parser = new DicomParser(u8, /*debug*/ false);
 const tags = parser.DicomTags || {};
 const transferSyntax = String(tags[TAG.TRANSFER_SYNTAX_UID] || '');
 
+// Map common DICOM transfer syntaxes to well-known exportable formats
+const EXPORT_FORMATS = {
+    // JPEG Baseline (Process 1)
+    '1.2.840.10008.1.2.4.50': { ext: 'jpg', mime: 'image/jpeg', label: 'JPEG Baseline' },
+    // JPEG Extended (Process 2 & 4)
+    '1.2.840.10008.1.2.4.51': { ext: 'jpg', mime: 'image/jpeg', label: 'JPEG Extended' },
+    // JPEG Lossless, Non-Hierarchical, First-Order Prediction (Process 14 [SV1])
+    '1.2.840.10008.1.2.4.57': { ext: 'jpg', mime: 'image/jpeg', label: 'JPEG Lossless (SV1)' },
+    // JPEG-LS
+    '1.2.840.10008.1.2.4.80': { ext: 'jls', mime: 'image/jls', label: 'JPEG-LS Lossless' },
+    '1.2.840.10008.1.2.4.81': { ext: 'jls', mime: 'image/jls', label: 'JPEG-LS Near-Lossless' },
+    // JPEG 2000
+    '1.2.840.10008.1.2.4.90': { ext: 'jp2', mime: 'image/jp2', label: 'JPEG 2000 (Lossless Only)' },
+    '1.2.840.10008.1.2.4.91': { ext: 'jp2', mime: 'image/jp2', label: 'JPEG 2000 (Lossless/Lossy)' },
+    // RLE (not a general-purpose image format, but dump as .rle bytes)
+    '1.2.840.10008.1.2.5': { ext: 'rle', mime: 'application/octet-stream', label: 'RLE encoding' },
+    // Others, possibliy raw raster format
+    '*': { ext: 'bin', mime: 'application/octet-stream', label: 'Other binary formats' }
+};
+
+function getExportFormat(tsUid) {
+    return EXPORT_FORMATS[tsUid] || null;
+}
+
 // ---- Extract pixel data ----
 let pixel = parser.image;
 let outBase = "./" + path.basename(inputPath);
@@ -40,16 +65,9 @@ if (Array.isArray(pixel) && pixel.length > 0) {
 }
 
 if (pixel && ArrayBuffer.isView(pixel)) {
-    if (transferSyntax === '1.2.840.10008.1.2.4.50') {
-        // JPEG Baseline
-        pixelOut = `${outBase}.pixel.jpg`;
-        fs.writeFileSync(pixelOut, Buffer.from(pixel.buffer, pixel.byteOffset, pixel.byteLength));
-    } else {
-        // Raw bytes
-        const ext = pixel.constructor && pixel.constructor.name || 'bin';
-        pixelOut = `${outBase}.pixel.${ext.toLowerCase()}`;
-        fs.writeFileSync(pixelOut, Buffer.from(pixel.buffer, pixel.byteOffset, pixel.byteLength));
-    }
+    const fmt = getExportFormat(transferSyntax) || getExportFormat("*");
+    pixelOut = `${outBase}.${fmt.ext}`;
+    fs.writeFileSync(pixelOut, Buffer.from(pixel.buffer, pixel.byteOffset, pixel.byteLength));
 }
 
 // ---- Summarize buffers/typed arrays by length ----
@@ -76,6 +94,7 @@ const report = {
     file: path.basename(inputPath),
     sizeBytes: u8.byteLength,
     transferSyntax,
+    exportFormat: (getExportFormat(transferSyntax)?.label) || null,
     rows: Number(tags[TAG.ROWS] || 0),
     columns: Number(tags[TAG.COLUMNS] || 0),
     bitsAllocated: Number(tags[TAG.BITS_ALLOCATED] || 0),
