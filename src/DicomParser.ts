@@ -387,9 +387,9 @@ namespace Efferent
                         if (this.isDebug)
                             console.log(err);
                     }
-                }
+                }*/
     
-                this.image = element.value;*/
+                this.image = element.value;
 
                 if (!isSequence && this.image)
                     this.ismainImage = true;
