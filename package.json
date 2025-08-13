@@ -1,13 +1,33 @@
 {
   "name": "efferent-dicom",
   "version": "1.0.0",
+  "description": "Dual build: browser global + Node (ESM/CJS) via bundling a tiny entry",
   "type": "module",
   "sideEffects": false,
-  "scripts": {
-    "build": "tsc -p tsconfig.json"
+  "main": "./dist/node/cjs/index.cjs",
+  "module": "./dist/node/esm/index.js",
+  "types": "./types/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/node/esm/index.js",
+      "require": "./dist/node/cjs/index.cjs"
+    },
+    "./browser": "./dist/Efferent.Dicom.js"
   },
+  "scripts": {
+    "build:browser": "tsc -p tsconfig.browser.json",
+    "build:node": "tsup",
+    "build": "npm run build:browser && npm run build:node"
+  },
+  "files": [
+    "dist",
+    "types",
+    "README.md",
+    "LICENSE"
+  ],
   "devDependencies": {
-    "esbuild": "^0.23.1",
+    "@types/node": "^24.2.1",
+    "tsup": "^8.5.0",
     "typescript": "^5.5.0"
   }
 }

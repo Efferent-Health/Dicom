@@ -9,17 +9,23 @@
     "compilerOptions": {
         "target": "ES5",
         "module": "none",
-        "outFile": "dist/Efferent.Dicom.js", 
+        "outFile": "dist/Efferent.Dicom.js",
         "sourceMap": false,
         "declaration": true,
         "removeComments": true,
         "strict": false,
-        "lib": ["ES2020", "DOM"],
+        "lib": [
+            "ES2020",
+            "DOM"
+        ],
         "skipLibCheck": true,
         "downlevelIteration": true,
-        "noEmitOnError": false        
+        "noEmitOnError": false
     },
     "include": [
         "src/**/*.ts"
+    ],
+    "exclude": [
+        "src/index.node.ts"
     ]
 }
