@@ -1,4 +1,8 @@
 # Efferent.Dicom
+[![npm version](https://img.shields.io/npm/v/efferent-dicom.svg)](https://www.npmjs.com/package/efferent-dicom)
+[![npm downloads](https://img.shields.io/npm/dm/efferent-dicom.svg)](https://www.npmjs.com/package/efferent-dicom)
+[![GitHub stars](https://img.shields.io/github/stars/efferentinc/dicom.svg?style=social&label=Star)](https://github.com/efferentinc/dicom)
+
 Javascript library for reading and writing DICOM files in desktop, cloud and browser applications.
 The following frameworks are supported:
 - Browser applications (Javascript)
@@ -14,7 +18,7 @@ The following frameworks are supported:
 ### Ancillary
 - DicomElement - Main building block for DICOM files
 - DICOM_TAG - Collection of commonly used DICOM tags
-- PixelSpacing
+- PixelSpacing - Used for calibration purposes
 
 ## Usage
 
