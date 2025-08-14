@@ -1,5 +1,5 @@
 # Efferent.Dicom
-Javascript library for reading and writing DICOM files in desktop and browser applications.
+Javascript library for reading and writing DICOM files in desktop, cloud and browser applications.
 The following frameworks are supported:
 - Browser applications (Javascript)
 - NodeJS ESM
@@ -8,8 +8,8 @@ The following frameworks are supported:
 ## API Overview
 
 ### Main classes
-- DicomParser - DICOM Readers and parser, with image extraction capabilities
-- DicomWriter - DICOM Creator and serializer
+- DicomParser - DICOM reader and parser, with image extraction capabilities
+- DicomWriter - DICOM creator and serializer
 
 ### Ancillary
 - DicomElement - Main building block for DICOM files
@@ -27,11 +27,12 @@ If working with Typescript, include Efferent.Dicom.d.ts in your tsconfig.json fi
     ]
 ````
 
-At runtime, add a reference to the script into your html header:
+At runtime, add a reference to the script into your html header section:
 ````html
-<header>
-    <script src="Efferent.Dicom.js"></script>      <!-- Full -->
+<head>
+    <script src="Efferent.Dicom.js"></script>      <!-- Full     -->
     <script src="Efferent.Dicom.min.js"></script>  <!-- Minified -->
+</head>
 ````
 You can also import the library using bundlers such as Webpack, Rollup, or Vite.
 
