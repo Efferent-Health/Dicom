@@ -1,7 +1,7 @@
 # Efferent.Dicom
 [![npm version](https://img.shields.io/npm/v/efferent-dicom.svg)](https://www.npmjs.com/package/efferent-dicom)
 [![npm downloads](https://img.shields.io/npm/dm/efferent-dicom.svg)](https://www.npmjs.com/package/efferent-dicom)
-[![GitHub stars](https://img.shields.io/github/stars/efferentinc/dicom.svg?style=social&label=Star)](https://github.com/efferentinc/dicom)
+[![GitHub stars](https://img.shields.io/github/stars/Efferent-Health/dicom.svg?style=social&label=Star)](https://github.com/Efferent-Health/dicom)
 
 Javascript library for reading and writing DICOM files in desktop, cloud and browser applications.
 The following frameworks are supported:
@@ -38,6 +38,13 @@ At runtime, add a reference to the script into your html header section:
     <script src="Efferent.Dicom.min.js"></script>  <!-- Minified -->
 </head>
 ````
+If preferred, you can use a CDN url like:
+````html
+    <script src="https://cdn.jsdelivr.net/npm/efferent-dicom@1/dist/Efferent.Dicom.js"></script>      <!-- Full     -->
+    <script src="https://cdn.jsdelivr.net/npm/efferent-dicom@1/dist/Efferent.Dicom.min.js"></script>  <!-- Minified -->
+</head>
+````
+
 You can also import the library using bundlers such as Webpack, Rollup, or Vite.
 
 ### NodeJS
