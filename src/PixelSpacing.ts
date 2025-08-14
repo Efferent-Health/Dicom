@@ -15,7 +15,7 @@ namespace Efferent
             this.CalibrationFactor = pixelX || pixelY || 1;
         }
 
-        public static ParseDicomTag(tagValue: string): PixelSpacing
+        public static ParseDicomTag(tagValue: string): PixelSpacing | null
         {
             try
             {

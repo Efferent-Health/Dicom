@@ -17,7 +17,6 @@ namespace Efferent
         private headerSize: number = 128;
         private numberFrames: number;
         private textDecoder: TextDecoder;
-        private textDecoderUTF8: TextDecoder;
 
         public dicomBuffer: Uint8Array;
         public isUnsigned: boolean = true;
@@ -31,13 +30,17 @@ namespace Efferent
         public implicitVR: boolean = false;
         public pixelSpacing: PixelSpacing;
 
+        private readonly longVRs = new Set([
+            "OB", "OD", "OL", "OF", "OV", "OW",
+            "SQ", "SV", "UC", "UN", "UR", "UT", "UV"
+        ]);
+
         constructor(buffer: Uint8Array, debug: boolean = false)
         {
             this.dicomBuffer = buffer;
             this.isDebug = debug;
             this.fileSize = buffer.length;
-            this.textDecoder = this.createDicomTextDecoder();
-            this.textDecoderUTF8 = new TextDecoder("utf-8");
+            this.textDecoder = DicomTextDecoder.ASCII;
 
             if (this.fileSize < 140)
                 return;
@@ -98,28 +101,16 @@ namespace Efferent
                         default:
                             VR = String.fromCharCode(this.dicomBuffer[this.position + 4]) + String.fromCharCode(this.dicomBuffer[this.position + 5]);
 
-                            switch (VR)
-                            {
-                                case "OB":
-                                case "OD":
-                                case "OL":
-                                case "OF":
-                                case "OV":
-                                case "OW":
-                                case "SQ":
-                                case "SV":
-                                case "UC":
-                                case "UN":
-                                case "UR":
-                                case "UT":
-                                case "UV":
-                                    VL = this.dicomBuffer[this.position + 8] + this.dicomBuffer[this.position + 9] * 256 + this.dicomBuffer[this.position + 10] * 65536 + this.dicomBuffer[this.position + 11] * 16777216;
-                                    this.position += 12;
-                                    break;
-                                default:
-                                    VL = this.dicomBuffer[this.position + 6] + this.dicomBuffer[this.position + 7] * 256;
-                                    this.position += 8;
-                                    break;
+                            if (this.longVRs.has(VR)) {
+                                VL = this.dicomBuffer[this.position + 8]
+                                + this.dicomBuffer[this.position + 9] * 256
+                                + this.dicomBuffer[this.position + 10] * 65536
+                                + this.dicomBuffer[this.position + 11] * 16777216;
+                                this.position += 12;
+                            } else {
+                                VL = this.dicomBuffer[this.position + 6]
+                                + this.dicomBuffer[this.position + 7] * 256;
+                                this.position += 8;
                             }
                             break;
                     }
@@ -222,7 +213,7 @@ namespace Efferent
                 case "UC": // Unlimited Characters (UTF-8 string)
                     {
                         const bytes = this.dicomBuffer.subarray(position, position + element.VL);
-                        element.value = this.textDecoderUTF8.decode(bytes).replace(/[\0\s]+$/, '');
+                        element.value = DicomTextDecoder.UTF8.decode(bytes).replace(/[\0\s]+$/, '');
                     }
                     break;
                 case "OD": // Other Double
@@ -375,19 +366,6 @@ namespace Efferent
 
                 if (this.implicitVR)  // Parsing of image is not supported for Implicit VR
                     return;
-
-                /*if (this.transferSyntax === "1.2.840.10008.1.2.4.50" && element.VR === "OB")
-                {
-                    try
-                    {
-                        let imageBuffer: Uint8Array = this.validateIsJpeg(this.position + 20, this.dicomBuffer.length - 8);
-                        element.value = imageBuffer;
-                    }
-                    catch (err) {
-                        if (this.isDebug)
-                            console.log(err);
-                    }
-                }*/
     
                 this.image = element.value;
 
@@ -424,7 +402,7 @@ namespace Efferent
                     }
                     break;
                 case DICOM_TAG.SPECIFIC_CHARACTER_SET:
-                    this.textDecoder = this.createDicomTextDecoder(value);
+                    this.textDecoder = DicomTextDecoder.CreateDicomTextDecoder(value);
                     break;
                 case DICOM_TAG.PHOTOMETRIC_INTERPRETATION:
                     this.photometric = value.toUpperCase();
@@ -490,7 +468,10 @@ namespace Efferent
 
             const group: number = this.dicomBuffer[this.position] + this.dicomBuffer[this.position + 1] * 256;
             const elem: number = this.dicomBuffer[this.position + 2] + this.dicomBuffer[this.position + 3] * 256;
-            const tag: string = ((group + 0x10000).toString(16).substr(-4) + "_" + (elem + 0x10000).toString(16).substr(-4)).toUpperCase();
+            const tag: string = (
+                (group + 0x10000).toString(16).slice(-4) + "_" +
+                (elem + 0x10000).toString(16).slice(-4)
+            ).toUpperCase();
 
             return tag;
         }
@@ -580,7 +561,7 @@ namespace Efferent
                     return;
 
                 const lengthUnknown: boolean = rootElement.VL === 0xFFFFFFFF;
-                let limit: number;
+                let limit: number = Infinity;
 
                 if (!lengthUnknown)
                     limit = this.position + rootElement.VL;
@@ -653,49 +634,6 @@ namespace Efferent
             const out = new ArrayBuffer(Math.max(0, e - s));
             new Uint8Array(out).set(src.subarray(s, e));
             return out;
-        }
-
-        private createDicomTextDecoder(charsetTagValue?: string): TextDecoder
-        {
-            const dicomToJsEncoding: { [key: string]: string } =
-            {
-                "ISO_IR 6": "us-ascii",           // Default: US-ASCII (7-bit)
-                "ISO_IR 100": "iso-8859-1",       // Latin-1 (Western Europe)
-                "ISO_IR 101": "iso-8859-2",       // Latin-2 (Central/Eastern Europe)
-                "ISO_IR 109": "iso-8859-3",       // Latin-3 (South European)
-                "ISO_IR 110": "iso-8859-4",       // Latin-4 (North European)
-                "ISO_IR 144": "iso-8859-5",       // Cyrillic
-                "ISO_IR 127": "iso-8859-6",       // Arabic
-                "ISO_IR 126": "iso-8859-7",       // Greek
-                "ISO_IR 138": "iso-8859-8",       // Hebrew
-                "ISO_IR 148": "iso-8859-9",       // Latin-5 (Turkish)
-                "ISO_IR 166": "iso-8859-11",      // Thai
-                "ISO_IR 192": "utf-8",            // Unicode UTF-8
-                "GB18030": "gb18030",             // Chinese (PRC)
-                "GBK": "gbk",                     // Chinese (simplified, subset of gb18030)
-                "ISO 2022 IR 13": "shift_jis",    // Japanese (JIS X 0201)
-                "ISO 2022 IR 87": "iso-2022-jp",  // Japanese (JIS X 0208)
-                "ISO 2022 IR 159": "iso-2022-jp", // Japanese (JIS X 0212) — limited support in JS
-                "ISO 2022 IR 149": "euc-kr",      // Korean
-                "ISO_IR 13": "shift_jis",         // Japanese (Katakana)
-                "ISO_IR 87": "iso-2022-jp",       // Japanese (Kanji)
-                "ISO_IR 159": "iso-2022-jp",      // Japanese (Kanji supplement)
-                "ISO_IR 149": "euc-kr",           // Korean
-                "ISO_IR 58": "gb2312",            // Chinese (simplified, legacy encoding)
-            };
-
-            let encoding = "us-ascii";
-
-            if (charsetTagValue)
-            {
-                const normalized = charsetTagValue.trim().toUpperCase();
-                if (dicomToJsEncoding[normalized])
-                {
-                    encoding = dicomToJsEncoding[normalized];
-                }
-            }
-
-            return new TextDecoder(encoding);
         }
     }
 }

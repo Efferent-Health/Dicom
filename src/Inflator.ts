@@ -241,7 +241,7 @@ namespace Efferent
             return this.buildTreeBranch(nonEmptyCodes, 0, 0);
         }
 
-        private buildTreeBranch(codes: Array<any>, prefix: number, prefixLength: number): object // branch
+        private buildTreeBranch(codes: Array<any>, prefix: number, prefixLength: number): object | null // branch
         {
             if (codes.length === 0)
                 return null;
@@ -412,7 +412,7 @@ namespace Efferent
             return symbol;
         }
 
-        private decodeItem(): object // item
+        private decodeItem(): object | null // item
         {
             if (this.state === 2)
                 return null;
