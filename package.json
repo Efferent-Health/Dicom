@@ -7,7 +7,7 @@
 
   "main": "./dist/node/index.cjs",
   "module": "./dist/node/index.js",
-  "types": "./dist/node/index.d.ts",
+  "types": "./types/index.d.ts",
 
   "exports": {
     ".": {
@@ -31,7 +31,11 @@
     "clean": "rimraf dist",
     "build:browser": "tsc -p tsconfig.browser.json",
     "minify:browser": "esbuild dist/Efferent.Dicom.js --minify --sourcemap --legal-comments=none --outfile=dist/Efferent.Dicom.min.js",
-    "build:node": "tsup",
+    
+    "build:node:esm": "tsup src/index.node.ts --format esm --target es2020 --out-dir dist/node --sourcemap --clean --tsconfig tsconfig.node.esm.json",
+    "build:node:cjs": "tsup src/index.node.ts --format cjs --target es2020 --out-dir dist/node --sourcemap --clean --tsconfig tsconfig.node.cjs.json",
+    "build:node": "npm run build:node:esm && npm run build:node:cjs",
+
     "build": "npm run clean && npm run build:browser && npm run minify:browser && npm run build:node",
     "prepublishOnly": "npm run build"
   },

@@ -5,7 +5,7 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { DicomParser, DICOM_TAG as TAG } from '../../dist/node/index.js';
+import { DicomParser, DICOM_TAG as TAG } from '../../dist/node/index.node.cjs';
 
 // import { DicomParser, DICOM_TAG as TAG} from 'efferent-dicom';
 

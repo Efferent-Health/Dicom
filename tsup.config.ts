@@ -17,7 +17,7 @@ export default defineConfig(() => {
         entry: { index: "src/index.node.ts" },
         format: ["esm", "cjs"],
         outDir: "dist/node",
-        dts: true,               // emits dist/node/esm/index.d.ts
+        dts: false,              // use hand-authored types instead of tsup dts        
         sourcemap: false,
         minify: false,
         clean: false,
