@@ -1,6 +1,6 @@
 {
     "name": "efferent-dicom",
-    "version": "1.1.0",
+    "version": "1.1.1",
     "description": "DICOM parser/writer for browser and Node.js",
     "type": "module",
     "sideEffects": false,
@@ -12,7 +12,14 @@
             "import": "./dist/node/index.js",
             "require": "./dist/node/index.cjs"
         },
-        "./browser": "./dist/Efferent.Dicom.js"
+        "./browser": {
+            "import": "./dist/Efferent.Dicom.js"
+        }
+    },
+    "typesVersions": {
+        "*": {
+            "browser": ["dist/Efferent.Dicom.d.ts"]
+        }
     },
     "repository": {
         "type": "git",
