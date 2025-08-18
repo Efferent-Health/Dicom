@@ -23,6 +23,12 @@
     },
     "homepage": "https://github.com/Efferent-Health/Dicom#readme",
     "license": "MIT",
+    "keywords": [
+        "dicom",
+        "dicom-images",
+        "dicom-files",
+        "dicomjs"
+    ],
     "scripts": {
         "clean": "rimraf dist",
         "build:browser": "tsc -p tsconfig.browser.json",
