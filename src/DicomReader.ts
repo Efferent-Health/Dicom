@@ -7,7 +7,7 @@ namespace Efferent
     VR types:  https://dicom.nema.org/medical/Dicom/2024e/output/chtml/part05/sect_6.2.html
     */
 
-    export class DicomParser
+    export class DicomReader
     {
         private position: number = 0;
         private fileSize: number;

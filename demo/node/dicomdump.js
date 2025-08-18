@@ -5,9 +5,9 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { DicomParser, DICOM_TAG as TAG } from '../../dist/node/index.node.cjs';
+import { DicomReader, DICOM_TAG as TAG } from '../../dist/node/index.cjs';
 
-// import { DicomParser, DICOM_TAG as TAG} from 'efferent-dicom';
+// import { DicomReader, DICOM_TAG as TAG} from 'efferent-dicom';
 
 const __filename = fileURLToPath(import.meta.url);
 
@@ -26,7 +26,7 @@ if (!fs.existsSync(inputPath)) {
 const bytes = fs.readFileSync(inputPath);
 const u8 = new Uint8Array(bytes.buffer, bytes.byteOffset, bytes.byteLength);
 
-const parser = new DicomParser(u8, /*debug*/ false);
+const parser = new DicomReader(u8, /*debug*/ false);
 const tags = parser.DicomTags || {};
 const transferSyntax = String(tags[TAG.TRANSFER_SYNTAX_UID] || '');
 

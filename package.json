@@ -1,55 +1,51 @@
 {
-  "name": "efferent-dicom",
-  "version": "1.1.0",
-  "description": "DICOM parser/writer for browser and Node.js",
-  "type": "module",
-  "sideEffects": false,
-
-  "main": "./dist/node/index.cjs",
-  "module": "./dist/node/index.js",
-  "types": "./types/index.d.ts",
-
-  "exports": {
-    ".": {
-      "import": "./dist/node/index.js",
-      "require": "./dist/node/index.cjs"
+    "name": "efferent-dicom",
+    "version": "1.1.0",
+    "description": "DICOM parser/writer for browser and Node.js",
+    "type": "module",
+    "sideEffects": false,
+    "main": "./dist/node/index.cjs",
+    "module": "./dist/node/index.js",
+    "types": "./dist/node/index.d.ts",
+    "exports": {
+        ".": {
+            "import": "./dist/node/index.js",
+            "require": "./dist/node/index.cjs"
+        },
+        "./browser": "./dist/Efferent.Dicom.js"
     },
-    "./browser": "./dist/Efferent.Dicom.js"
-  },
-
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/Efferent-Health/Dicom.git"
-  },
-  "bugs": {
-    "url": "https://github.com/Efferent-Health/Dicom/issues"
-  },
-  "homepage": "https://github.com/Efferent-Health/Dicom#readme",
-  "license": "MIT",
-
-  "scripts": {
-    "clean": "rimraf dist",
-    "build:browser": "tsc -p tsconfig.browser.json",
-    "minify:browser": "esbuild dist/Efferent.Dicom.js --minify --sourcemap --legal-comments=none --outfile=dist/Efferent.Dicom.min.js",
-    
-    "build:node:esm": "tsup src/index.node.ts --format esm --target es2020 --out-dir dist/node --sourcemap --clean --tsconfig tsconfig.node.esm.json",
-    "build:node:cjs": "tsup src/index.node.ts --format cjs --target es2020 --out-dir dist/node --sourcemap --clean --tsconfig tsconfig.node.cjs.json",
-    "build:node": "npm run build:node:esm && npm run build:node:cjs",
-
-    "build": "npm run clean && npm run build:browser && npm run minify:browser && npm run build:node",
-    "prepublishOnly": "npm run build"
-  },
-
-  "files": [
-    "dist",
-    "README.md",
-    "LICENSE"
-  ],
-
-  "devDependencies": {
-    "@types/node": "^20.0.0",
-    "rimraf": "^5.0.0",
-    "tsup": "^8.5.0",
-    "typescript": "^5.5.0"
-  }
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/Efferent-Health/Dicom.git"
+    },
+    "bugs": {
+        "url": "https://github.com/Efferent-Health/Dicom/issues"
+    },
+    "homepage": "https://github.com/Efferent-Health/Dicom#readme",
+    "license": "MIT",
+    "scripts": {
+        "clean": "rimraf dist",
+        "build:browser": "tsc -p tsconfig.browser.json",
+        "minify:browser": "esbuild dist/Efferent.Dicom.js --minify --sourcemap --legal-comments=none --outfile=dist/Efferent.Dicom.min.js",
+        "build:node": "tsup --entry.index src/index.node.ts --format esm,cjs --target es2020 --out-dir dist/node --sourcemap --dts --tsconfig tsconfig.node.esm.json",
+        "build": "npm run clean && npm run build:browser && npm run minify:browser && npm run build:node",
+        "prepublishOnly": "npm run build",
+        "test:node:esm": "node -e \"import('./dist/node/index.js').then(m=>console.log('ESM:', Object.keys(m)))\"",
+        "test:node:cjs": "node -e \"console.log('CJS:', Object.keys(require('./dist/node/index.cjs')))\"",
+        "test:node": "npm run test:node:esm && npm run test:node:cjs",
+        "test:browser": "node --input-type=module -e \"import{JSDOM}from'jsdom';import{readFileSync as r}from'node:fs';import{TextDecoder as TD}from'node:util';const d=new JSDOM('<!doctype html><body>',{runScripts:'dangerously'});const w=d.window;w.globalThis=w;w.TextDecoder=TD;w.eval(r('./dist/Efferent.Dicom.js','utf8'));console.log('Browser(jsdom):',Object.keys(w.Efferent||{}));\"",
+        "build:test": "npm run build && npm run test:node && npm run test:browser"
+    },
+    "files": [
+        "dist",
+        "README.md",
+        "LICENSE"
+    ],
+    "devDependencies": {
+        "@types/node": "^20.0.0",
+        "jsdom": "^26.1.0",
+        "rimraf": "^5.0.0",
+        "tsup": "^8.5.0",
+        "typescript": "^5.5.0"
+    }
 }

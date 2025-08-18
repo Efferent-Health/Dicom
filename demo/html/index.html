@@ -80,7 +80,7 @@
                 if (!fileBuf)
                     return;
 
-                parser = new Efferent.DicomParser(fileBuf, /*debug*/ false);
+                parser = new Efferent.DicomReader(fileBuf, /*debug*/ false);
 
                 const TAG = Efferent.DICOM_TAG;
                 const tags = parser.DicomTags || {};

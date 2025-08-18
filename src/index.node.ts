@@ -6,7 +6,7 @@ declare const Efferent: any;
 const NS = (globalThis as any).Efferent ?? Efferent;
 
 export const DICOM_TAG = NS.DICOM_TAG;
-export const DicomParser = NS.DicomParser;
+export const DicomReader = NS.DicomReader;
 export const DicomWriter = NS.DicomWriter;
 export const DicomElement = NS.DicomElement;
 export const PixelSpacing = NS.PixelSpacing;

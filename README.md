@@ -5,14 +5,14 @@
 
 Javascript library for reading and writing DICOM files in desktop, cloud and browser applications.
 The following frameworks are supported:
-- Browser applications (Javascript)
+- Browser (Javascript)
 - NodeJS ESM
 - NodeJS CJS
 
 ## API Overview
 
 ### Main classes
-- DicomParser - DICOM reader and parser, with image extraction capabilities
+- DicomReader - DICOM reader and parser, with image extraction capabilities
 - DicomWriter - DICOM creator and serializer
 
 ### Ancillary
@@ -53,13 +53,13 @@ The library is published on npm as `efferent-dicom`.
 **ESM (ECMAScript Modules)**  
 If your project uses `"type": "module"` in `package.json` or has `.mjs` files:
 ```js
-import { DicomParser, DICOM_TAG as TAG } from 'efferent-dicom';
+import { DicomReader, DICOM_TAG as TAG } from 'efferent-dicom';
 ```
 
 **CommonJS (require syntax)**  
 If your project uses the default CommonJS module system:
 ```js
-const { DicomParser, DICOM_TAG: TAG } = require('efferent-dicom');
+const { DicomReader, DICOM_TAG: TAG } = require('efferent-dicom');
 ```
 
 **Note:**  
@@ -69,9 +69,24 @@ const { DicomParser, DICOM_TAG: TAG } = require('efferent-dicom');
 #### Example
 ```js
 import fs from 'fs';
-import { DicomParser, DICOM_TAG as TAG } from 'efferent-dicom';
+import { DicomReader, DICOM_TAG as TAG } from 'efferent-dicom';
 
 const data = fs.readFileSync('example.dcm');
-const parser = new DicomParser(new Uint8Array(data.buffer));
+const parser = new DicomReader(new Uint8Array(data.buffer));
 console.log(parser.DicomTags[TAG.PATIENT_NAME]);
 ```
+
+## Demos
+
+There are two demo applications:
+
+### NodeJS
+Run node/dicomdump.js to print in the console detailed DICOM tags, using the command:
+````sh
+node ./demo/node/dicomdump.js <dicom file>
+````
+
+### Browser
+Open demo/index.html for an interactive demo that can read a DICOM file (.dcm extension), show a summary and a picture (only for .50 JPEG transfer syntax), as well as detailed DICOM tags
+
+![alt text](demo/html/image.png)

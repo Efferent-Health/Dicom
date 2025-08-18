@@ -4,7 +4,7 @@
 dist/**
 node_modules/**
 package-lock.json
-demo/node/*.jls
-demo/node/*.jp*
-demo/node/*.bin
-demo/node/*.rle
+*.jls
+*.jp*
+*.bin
+*.rle
