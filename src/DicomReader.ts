@@ -345,10 +345,10 @@ namespace Efferent
                     this.processSequence(element);
                     return;
                 default:
-                    if (element.tag === "FFFE_E000")
+                    if (element.tag === DICOM_TAG.DELIMITATION_SEQUENCE)
                     {
-                        element.value = [];
-                        this.processSequence(element);
+                        element.value = {};
+                        this.processSequenceItem(element);
                         return;
                     }
                     break;
@@ -538,7 +538,7 @@ namespace Efferent
                         break;
                     }
                 }
-                else if (tag === DICOM_TAG.DELIMITATION_SEQUENCE_ITEMS_1 || tag === DICOM_TAG.DELIMITATION_SEQUENCE_ITEMS_2)
+                else if (tag === DICOM_TAG.SEQUENCE_DELIMITATION_ITEM || tag === DICOM_TAG.ITEM_DELIMITATION_ITEM)
                 {
                     // console.log("breaking because of tag");
                     break;
@@ -550,6 +550,59 @@ namespace Efferent
                 }
 
                 this.position += VL;
+            }
+        }
+
+        private processSequenceItem(rootElement: DicomElement): void
+        {
+
+            if (rootElement)
+            {
+                if (rootElement.VL === 0)
+                    return;
+
+                const lengthUnknown: boolean = rootElement.VL === 0xFFFFFFFF;
+                let limit: number = Infinity;
+
+                if (!lengthUnknown)
+                    limit = this.position + rootElement.VL;
+
+                let element: DicomElement;
+
+                while (element = this.getNextElement())
+                {
+                    if (!lengthUnknown && element.VL === 0xFFFFFFFF)
+                        element.VL = limit - this.position;
+
+                    this.fixVRValue(element);
+                    this.readElementValue(element);
+                    this.evaluateElementTag(element, true);
+
+                    if (Number.isNaN(this.position))
+                        break;
+
+                    if (element.tag === DICOM_TAG.ITEM_DELIMITATION_ITEM)
+                        break;
+
+                    if ((this.position + 8) >= this.fileSize)
+                    {
+                        // console.log("breaking because of position");
+                        rootElement.value[element.tag] = element.value; 
+                        break;
+                    }
+
+                    if (!lengthUnknown && this.position >= limit)
+                    {
+                        // console.log("breaking because of limit");
+                        rootElement.value[element.tag] = element.value; 
+                        break;
+                    }
+
+                    if (lengthUnknown && element.tag === DICOM_TAG.SEQUENCE_DELIMITATION_ITEM)
+                        break;
+
+                    rootElement.value[element.tag] = element.value; 
+                }
             }
         }
 
@@ -567,6 +620,7 @@ namespace Efferent
                     limit = this.position + rootElement.VL;
 
                 let element: DicomElement;
+
                 while (element = this.getNextElement())
                 {
                     if (!lengthUnknown && element.VL === 0xFFFFFFFF)
@@ -576,38 +630,28 @@ namespace Efferent
                     this.readElementValue(element);
                     this.evaluateElementTag(element, true);
 
-                    if (Number.isNaN(this.position))
+                    if (lengthUnknown && element.tag === DICOM_TAG.SEQUENCE_DELIMITATION_ITEM)
                     {
+                        // console.log("breaking because of tag");
                         break;
                     }
+
+                    rootElement.value.push(element.value);
+
+                    if (Number.isNaN(this.position))
+                        break;
 
                     if ((this.position + 8) >= this.fileSize)
                     {
                         // console.log("breaking because of position");
-                        rootElement.value.push(element);
                         break;
                     }
 
                     if (!lengthUnknown && this.position >= limit)
                     {
                         // console.log("breaking because of limit");
-                        rootElement.value.push(element);
                         break;
                     }
-
-                    if (lengthUnknown && element.tag === DICOM_TAG.DELIMITATION_SEQUENCE_ITEMS_1)
-                    {
-                        // console.log("breaking because of tag");
-                        break;
-                    }
-
-                    if (lengthUnknown && element.tag === DICOM_TAG.DELIMITATION_SEQUENCE_ITEMS_2)
-                    {
-                        // console.log("breaking because of tag");
-                        break;
-                    }
-
-                    rootElement.value.push(element);
                 }
             }
         }

@@ -1,6 +1,6 @@
 {
     "name": "efferent-dicom",
-    "version": "1.1.1",
+    "version": "1.2.0",
     "description": "DICOM parser/writer for browser and Node.js",
     "type": "module",
     "sideEffects": false,
@@ -47,7 +47,8 @@
         "test:node:cjs": "node -e \"console.log('CJS:', Object.keys(require('./dist/node/index.cjs')))\"",
         "test:node": "npm run test:node:esm && npm run test:node:cjs",
         "test:browser": "node --input-type=module -e \"import{JSDOM}from'jsdom';import{readFileSync as r}from'node:fs';import{TextDecoder as TD}from'node:util';const d=new JSDOM('<!doctype html><body>',{runScripts:'dangerously'});const w=d.window;w.globalThis=w;w.TextDecoder=TD;w.eval(r('./dist/Efferent.Dicom.js','utf8'));console.log('Browser(jsdom):',Object.keys(w.Efferent||{}));\"",
-        "build:test": "npm run build && npm run test:node && npm run test:browser"
+        "build:test": "npm run build && npm run test:node && npm run test:browser",
+        "debug": "npm run build && node ./demo/node/dicomdump.js demo/node/3_inflated.dcm >out.json"
     },
     "files": [
         "dist",

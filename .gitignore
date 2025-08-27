@@ -8,3 +8,5 @@ package-lock.json
 *.jp*
 *.bin
 *.rle
+*.dcm
+out.json

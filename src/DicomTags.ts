@@ -120,7 +120,7 @@ namespace Efferent
             PIXEL_DATA: "7FE0_0010",
 
             DELIMITATION_SEQUENCE: "FFFE_E000",
-            DELIMITATION_SEQUENCE_ITEMS_1: "FFFE_E00D",
-            DELIMITATION_SEQUENCE_ITEMS_2: "FFFE_E0DD"
+            SEQUENCE_DELIMITATION_ITEM: "FFFE_E0DD",
+            ITEM_DELIMITATION_ITEM: "FFFE_E00D"
         } as const;
 }
