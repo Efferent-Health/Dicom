@@ -10,5 +10,6 @@ export const DicomReader = NS.DicomReader;
 export const DicomWriter = NS.DicomWriter;
 export const DicomElement = NS.DicomElement;
 export const PixelSpacing = NS.PixelSpacing;
+export const DicomDictionary = NS.DicomDictionary;
 
 export default NS;

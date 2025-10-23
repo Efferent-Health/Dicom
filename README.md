@@ -17,7 +17,8 @@ The following frameworks are supported:
 
 ### Ancillary
 - DicomElement - Main building block for DICOM files
-- DICOM_TAG - Collection of commonly used DICOM tags
+- DICOM_TAG - Collection constants for commonly used DICOM tags
+- DicomDictionary - Contains VR and description for most used DICOM tags
 - PixelSpacing - Used for calibration purposes
 
 ## Usage

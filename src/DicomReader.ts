@@ -17,6 +17,7 @@ namespace Efferent
         private headerSize: number = 128;
         private numberFrames: number;
         private textDecoder: TextDecoder;
+        private dictionary: DicomDictionary;
 
         public dicomBuffer: Uint8Array;
         public isUnsigned: boolean = true;
@@ -41,6 +42,7 @@ namespace Efferent
             this.isDebug = debug;
             this.fileSize = buffer.length;
             this.textDecoder = DicomTextDecoder.ASCII;
+            this.dictionary = new DicomDictionary();
 
             if (this.fileSize < 140)
                 return;
@@ -86,6 +88,8 @@ namespace Efferent
                 if (this.implicitVR && this.position >= this.headerSize)
                 {
                     VL = this.dicomBuffer[this.position + 4] + this.dicomBuffer[this.position + 5] * 256 + this.dicomBuffer[this.position + 6] * 65536 + this.dicomBuffer[this.position + 7] * 16777216;
+                    VR = this.dictionary.GetVR(tag);
+
                     this.position += 8;
                 }
                 else
@@ -123,6 +127,7 @@ namespace Efferent
             }
             catch (err)
             {
+                // console.error(err);
                 return null;
             }
         }
@@ -145,7 +150,7 @@ namespace Efferent
         {
             let position: number = this.position;
 
-            if (this.implicitVR && position >= this.headerSize)
+            if (this.implicitVR && !element.VR && position >= this.headerSize)
             {
                 const tag: string = this.fetchTag();
 
@@ -620,7 +625,7 @@ namespace Efferent
                     limit = this.position + rootElement.VL;
 
                 let element: DicomElement;
-
+                
                 while (element = this.getNextElement())
                 {
                     if (!lengthUnknown && element.VL === 0xFFFFFFFF)
@@ -652,6 +657,13 @@ namespace Efferent
                         // console.log("breaking because of limit");
                         break;
                     }
+
+                    const tag = this.fetchTag();
+                    if (tag == DICOM_TAG.ITEM_DELIMITATION_ITEM)
+                    {
+                        break;
+                    }
+
                 }
             }
         }
