@@ -1,6 +1,6 @@
 {
     "name": "efferent-dicom",
-    "version": "1.3.0-beta.1",
+    "version": "1.3.0",
     "description": "DICOM parser/writer for browser and Node.js",
     "type": "module",
     "sideEffects": false,

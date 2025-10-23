@@ -2,6 +2,28 @@ namespace Efferent
 {
     export const DICOM_DICT = `
 tag,VR,VM,description
+00020000,UL,,File Meta Information Group Length
+1,OB,,$1 $2 $3 Version
+2,UI,,Media Storage SOP Class UID
+3,,,$1 $2 $3 Instance $5
+10,,,Transfer Syntax $5
+12,,,Implementation Class $3
+13,SH,,$1 Version Name
+16,AE,,Source Application Entity Title
+17,,,Sending $2 $3 $4
+18,,,Receiving $2 $3 $4
+26,UR,,Source Presentation Address
+27,,,Sending $2 $3
+28,,,Receiving $2 $3
+31,OB,,RTV Meta Information Version
+32,UI,,$1 Communication SOP Class UID
+33,,,$1 $2 $3 Instance $5
+35,OB,,$1 Source Identifier
+36,,,$1 Flow $3
+37,UL,,$1 $2 RTP Sampling Rate
+38,FD,,$1 $2 Actual Frame Duration
+100,UI,,Private Information Creator UID
+102,OB,,$1 $2
 00080001,UL,,Length to End
 5,CS,1-n,Specific Character Set
 6,SQ,,Language Code Sequence
@@ -2048,5 +2070,6 @@ E031,,,Home Community $3
 10,OB/OW,,$3 $4
 20,OW,,Coefficients SDVN
 30,,,$1 SDHN
-40,,,$1 SDDN`;
+40,,,$1 SDDN
+`;
 }

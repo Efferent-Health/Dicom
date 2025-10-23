@@ -8,7 +8,14 @@ namespace Efferent
         {            
         }
 
-        public GetVR(dicomtag: string)
+        public GetDictionary(): Record<string, [string, string, string]>
+        {
+            this.expandDicomDictionary(DICOM_DICT);
+
+            return this.dictionary;
+        }
+
+        public GetVR(dicomtag: string): string
         {
             this.expandDicomDictionary(DICOM_DICT);
 
@@ -17,28 +24,29 @@ namespace Efferent
             return vr?.includes("/") ? undefined : vr;
         }
 
-        public GetVM(dicomtag: string)
+        public GetVM(dicomtag: string): string
         {
             this.expandDicomDictionary(DICOM_DICT);
 
             return this.dictionary[dicomtag]?.[1];
         }
 
-        public GetDescription(dicomtag: string)
+        public GetDescription(dicomtag: string): string
         {
             this.expandDicomDictionary(DICOM_DICT);
 
             return this.dictionary[dicomtag]?.[2];
         }
 
-        private expandDicomDictionary(csv: string)
+        private expandDicomDictionary(csv: string): void
         {
             if (this.dictionary)
                 return;
 
             const lines = csv.trim().split(/\r?\n/);
+
             if (lines.length < 2)
-                return {};
+                return;
 
             const dataLines = lines.slice(1);
             const dict: Record<string, [string, string, string]> = {};

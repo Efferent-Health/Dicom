@@ -150,6 +150,13 @@ namespace Efferent
         {
             let position: number = this.position;
 
+            if (element.tag === DICOM_TAG.DELIMITATION_SEQUENCE)
+            {
+                element.value = {};
+                this.processSequenceItem(element);
+                return;
+            }
+
             if (this.implicitVR && !element.VR && position >= this.headerSize)
             {
                 const tag: string = this.fetchTag();
@@ -167,7 +174,7 @@ namespace Efferent
                 else
                 {
                     const bytes = this.dicomBuffer.subarray(position, position + element.VL);
-                    element.value = this.textDecoder.decode(bytes).replace(/[\0\s]+$/, '');
+                    element.value = this.smartDecode(bytes);
                     this.position += element.VL;
                 }
 
@@ -690,6 +697,16 @@ namespace Efferent
             const out = new ArrayBuffer(Math.max(0, e - s));
             new Uint8Array(out).set(src.subarray(s, e));
             return out;
+        }
+
+        private smartDecode(bytes: Uint8Array): any {
+            const decoded = this.textDecoder.decode(bytes);
+
+            if (/[\u0000-\u001F\u007F\uFFFD]/.test(decoded))
+            {
+                return new Uint8Array(bytes);
+            }
+            return decoded.replace(/[\0\s]+$/, '');
         }
     }
 }

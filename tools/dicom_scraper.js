@@ -25,16 +25,17 @@ function compressRelative(older, prev, curr)
 
 function tableToCsv(html)
 {
-    const tableMatch = html.match(/<table[^>]*>[\s\S]*?<\/table>/i);
+    const anchorMatch = html.match(/<a[^>]+(name|id)=["']([^"']+)["'][^>]*>[\s\S]*?(<table[\s\S]*?<\/table>)/i);
+    // This match is replaced by logic to find table by anchor, but since anchor is dynamic, we do below:
 
-    if (!tableMatch) {
-        console.error('No table found in the HTML.');
-        return '';
-    }
+    // The anchor string is passed in scrapeDicomDictionary, so here we need to find the table by anchor.
+    // We'll move this logic to scrapeDicomDictionary to pass the correct tableHtml to tableToCsv.
 
-    const rows = ["tag,VR,VM,description"];
-    const tableHtml = tableMatch[0];
-    const tbodyMatch = tableHtml.match(/<tbody[^>]*>([\s\S]*?)<\/tbody>/i);
+    // Since we removed tableIndex, we will find the table in scrapeDicomDictionary and pass the html of the table only.
+    // So tableToCsv now expects the html of the table only.
+
+    const rows = [];
+    const tbodyMatch = html.match(/<tbody[^>]*>([\s\S]*?)<\/tbody>/i);
     const groups = [ "0002", "0008", "0010", "0018", "0020", "0028", "0032", "0038", "0040", "5200", "7FE0" ]
 
     var descr, tag, vr, vm, group;
@@ -86,10 +87,8 @@ function tableToCsv(html)
     return rows.join('\n');
 }
 
-async function scrapeDicomDictionary()
+async function scrapeDicomDictionary(url)
 {
-    const url = 'https://www.dicomstandard.org/standards/view/data-dictionary#chapter_6';
-
     try {
         const response = await fetch(url);
 
@@ -97,18 +96,40 @@ async function scrapeDicomDictionary()
             throw new Error(`HTTP error! status: ${response.status}`);
 
         const html = await response.text();
-        const csv = tableToCsv(html);
+
+        const anchorMatch = url.match(/#(.+)$/);
+        const anchor = anchorMatch ? anchorMatch[1] : null;
+
+        if (!anchor) {
+            console.error('No anchor found in URL.');
+            return;
+        }
+
+        const regex = new RegExp(`(<a[^>]+(?:name|id)=["']${anchor}["'][^>]*>)[\\s\\S]*?(<table[\\s\\S]*?<\\/table>)`, 'i');
+        const match = html.match(regex);
+        if (!match) {
+            console.error(`No table found for anchor: ${anchor}`);
+            return;
+        }
+        const tableHtml = match[2];
+
+        const csv = tableToCsv(tableHtml);
 
         if (csv) {
-console.log(`namespace Efferent
-{
-    export const DICOM_DICT = \`
-${csv}\`;
-}`);
+            console.log(csv);
         }
     } catch (error) {
         console.error('Error fetching or parsing the page:', error.message);
     }
 }
 
-scrapeDicomDictionary();
+console.log(`namespace Efferent
+{
+    export const DICOM_DICT = \`
+tag,VR,VM,description`);
+
+await scrapeDicomDictionary('https://www.dicomstandard.org/standards/view/data-dictionary#chapter_7');
+await scrapeDicomDictionary('https://www.dicomstandard.org/standards/view/data-dictionary#chapter_6');
+
+console.log(`\`;
+}`);
