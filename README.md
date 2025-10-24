@@ -9,6 +9,12 @@ The following frameworks are supported:
 - NodeJS ESM
 - NodeJS CJS
 
+## Table of contents
+
+- [API Overview](#api-overview)
+- [Usage](#usage)
+- [Demos](#demos)
+
 ## API Overview
 
 ### Main classes
@@ -20,6 +26,9 @@ The following frameworks are supported:
 - DICOM_TAG - Collection constants for commonly used DICOM tags
 - DicomDictionary - Contains VR and description for most used DICOM tags
 - PixelSpacing - Used for calibration purposes
+
+### Full documentation
+Detailed documentation can be read [here](./docs/documentation.md)
 
 ## Usage
 
