@@ -1,5 +1,7 @@
 # Documentation
 
+This document explains how the three core components of the Efferent DICOM toolkit fit together, the responsibilities each class owns, and practical guidance for using them in browser and Node.js applications.
+
 ## Table of contents
 
 - [Overview](#overview)
@@ -8,10 +10,6 @@
 - [DicomDictionary](#dicomdictionary)
 - [Working with the components together](#working-with-the-components-together)
 - [Additional tips and best practices](#additional-tips-and-best-practices)
-
-# Documentation
-
-This document explains how the three core components of the Efferent DICOM toolkit fit together, the responsibilities each class owns, and practical guidance for using them in browser and Node.js applications.
 
 ## Overview
 
